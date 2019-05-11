@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import Counter from './components/Counter';
+import {Provider} from './react-redux';
+//在入口文件index中引一次store就够了，不需要再在每个子组件中都去引入一次
+import store from './store';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+ReactDOM.render((
+    <Provider store={store}>
+        <Counter/>
+    </Provider>
+),document.getElementById('root'));
