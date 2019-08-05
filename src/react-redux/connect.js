@@ -13,7 +13,18 @@ export default function(mapStateToProps,mapDispatchToProps){
               super(props);//context={store:this.props.store}
               //将总的状态映射成当前组件需要的属性对象
               this.state = mapStateToProps(context.store.getState());
+              if(typeof mapDispatchToProps == 'function'){
+                  this.boundActions = mapDispatchToProps(context.store.dispatch,props);
+              }else{
+                  this.boundActions = bindActionCreators(mapDispatchToProps,context.store.dispatch);
+              }
           }
+         shouldComponentUpdate(newProps,nextState){
+             if(this.state === mapStateToProps(context.store.getState())){
+                 return false;
+             }
+             return true;
+         }
           componentDidMount(){
               this.unsubcribe = this.context.store.subscribe(()=>{
                   this.setState(mapStateToProps(this.context.store.getState()));
@@ -23,14 +34,7 @@ export default function(mapStateToProps,mapDispatchToProps){
             this.unsubcribe();
           }
           render(){
-               let actions={};
-              if(typeof mapDispatchToProps == 'function'){
-                actions = mapDispatchToProps(this.context.store.dispatch);
-              }else{
-                actions = bindActionCreators(mapDispatchToProps,this.context.store.dispatch);
-              }
-              
-              return <WrappedComponent dispatch={this.context.store.dispatch} {...this.state} {...actions}/>
+              return <WrappedComponent dispatch={this.context.store.dispatch} {...this.state} {...boundActions}/>
           }
      }
    }
